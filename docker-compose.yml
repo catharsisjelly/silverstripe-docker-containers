@@ -1,0 +1,53 @@
+version: '3'
+
+volumes:
+  mysql:
+    driver: local
+
+services:
+  mysql:
+    image: mysql:5.8
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 'dev'
+      MYSQL_USER: 'myuser'
+      MYSQL_PASSWORD: 'dev'
+      MYSQL_DATABASE: my_db
+      MYSQL_HOST: localhost
+    volumes:
+      - mysql:/var/lib/mysql
+    ports:
+      - 3030:3306
+
+  php:
+    build:
+      context: build/silverstripe-php-7-1
+    image: catharsisjelly/silverstripe-php:7.1-fpm
+    restart: always
+    environment:
+      XDEBUG_CONFIG: remote_host=host.docker.internal remote_port=9001 remote_enable=1
+      SS_DATABASE_CLASS: MySQLPDODatabase
+      SS_DATABASE_USERNAME: root
+      SS_DATABASE_PASSWORD: dev
+      SS_DATABASE_SERVER: mysql
+      SS_DATABASE_NAME: my_db
+      SS_DEFAULT_ADMIN_USERNAME: admin
+      SS_DEFAULT_ADMIN_PASSWORD: admin
+      SS_ENVIRONMENT_TYPE: dev
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - mysql
+
+  nginx:
+    build:
+      context: ./build/nginx
+    image: catharsisjelly/nginx:stable
+    restart: always
+    ports:
+      - 4430:443
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - php
+      - mysql
