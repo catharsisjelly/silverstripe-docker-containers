@@ -1,12 +1,28 @@
 version: '3'
 
 volumes:
-  mysql:
+  db:
     driver: local
 
 services:
-  mysql:
-    image: mysql:5.8
+
+# If you want to use mysql, un-comment this and comment the mariadb
+#  db:
+#    image: mysql:5.7
+#    restart: always
+#    environment:
+#      MYSQL_ROOT_PASSWORD: 'dev'
+#      MYSQL_USER: 'myuser'
+#      MYSQL_PASSWORD: 'dev'
+#      MYSQL_DATABASE: my_db
+#      MYSQL_HOST: localhost
+#    volumes:
+#      - db:/var/lib/db
+#    ports:
+#      - 3030:3306
+
+  db:
+    image: mariadb:10-focal
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 'dev'
@@ -15,7 +31,7 @@ services:
       MYSQL_DATABASE: my_db
       MYSQL_HOST: localhost
     volumes:
-      - mysql:/var/lib/mysql
+      - db:/var/lib/db
     ports:
       - 3030:3306
 
@@ -25,11 +41,10 @@ services:
     image: catharsisjelly/silverstripe-php:7.1-fpm
     restart: always
     environment:
-      XDEBUG_CONFIG: remote_host=host.docker.internal remote_port=9001 remote_enable=1
       SS_DATABASE_CLASS: MySQLPDODatabase
       SS_DATABASE_USERNAME: root
       SS_DATABASE_PASSWORD: dev
-      SS_DATABASE_SERVER: mysql
+      SS_DATABASE_SERVER: db
       SS_DATABASE_NAME: my_db
       SS_DEFAULT_ADMIN_USERNAME: admin
       SS_DEFAULT_ADMIN_PASSWORD: admin
@@ -37,7 +52,7 @@ services:
     volumes:
       - ./:/var/www/html
     depends_on:
-      - mysql
+      - db
 
   nginx:
     build:
@@ -50,4 +65,4 @@ services:
       - ./:/var/www/html
     depends_on:
       - php
-      - mysql
+      - db
