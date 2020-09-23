@@ -1,6 +1,6 @@
 # Docker containers for Silverstripe
 
-This is a sample config for running PHP that is capable of running the Silverstripe CMS, it is compatible with V3 and V4 of Silverstripe and uses NginX as the webserver. 
+This is a sample config for running PHP that is capable of running the Silverstripe CMS, it is compatible with V3 and V4 of Silverstripe and uses NginX as the webserver.
 
 ## Requirements
 
@@ -51,7 +51,7 @@ php:
 
 ### NginX
 
-NginX has been set up to work with the most recent stable version of the application. To switch between SS3 and SS4 configuration change the line in the `build\nginx\Dockerfile` and then ensure you rebuild your containers
+NginX has been set up to work with the most recent stable version of the application. To switch between SS3 and SS4 configuration change the line in the `build\nginx\Dockerfile` and then ensure you rebuild your containers. It's set up as SSL on port by default with a self-generated key, the `docker-compose.yml` file exposes that on port `4430` so to access your webserver browse to `https://0.0.0.0:4430`
 
 ```
 COPY ss-{version}.conf /etc/nginx/conf.d/default.conf
