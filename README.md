@@ -9,7 +9,7 @@ This is a sample config for running PHP that is capable of running the Silverstr
 
 ## Instructions
 
-Copy the `build` directory and the `docker-compose.yml` file over to your relevant project
+Copy the `build` directory and the `docker-compose.yml` file over to your relevant project.
 
 ```
 docker-compose build --force-rm --no-cache
